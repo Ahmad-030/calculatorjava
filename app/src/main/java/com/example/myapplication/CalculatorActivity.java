@@ -1,10 +1,13 @@
 package com.example.myapplication;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
+import java.util.HashSet;
+import java.util.Set;
 
 public class CalculatorActivity extends AppCompatActivity {
 
@@ -13,6 +16,7 @@ public class CalculatorActivity extends AppCompatActivity {
     private String operator = "";
     private double firstNumber = 0;
     private boolean isNewOperation = true;
+    private SharedPreferences prefs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,6 +25,8 @@ public class CalculatorActivity extends AppCompatActivity {
 
         tvResult = findViewById(R.id.tvResult);
         tvExpression = findViewById(R.id.tvExpression);
+
+        prefs = getSharedPreferences("CalculatorHistory", MODE_PRIVATE);
 
         setupNumberButtons();
         setupOperatorButtons();
@@ -45,7 +51,6 @@ public class CalculatorActivity extends AppCompatActivity {
             findViewById(id).setOnClickListener(numberClickListener);
         }
 
-        // Dot button
         findViewById(R.id.btnDot).setOnClickListener(v -> {
             if (isNewOperation) {
                 currentNumber = "0";
@@ -80,7 +85,6 @@ public class CalculatorActivity extends AppCompatActivity {
     }
 
     private void setupFunctionButtons() {
-        // Clear button
         findViewById(R.id.btnClear).setOnClickListener(v -> {
             currentNumber = "";
             operator = "";
@@ -90,7 +94,6 @@ public class CalculatorActivity extends AppCompatActivity {
             tvExpression.setText("");
         });
 
-        // Delete button
         findViewById(R.id.btnDelete).setOnClickListener(v -> {
             if (!currentNumber.isEmpty()) {
                 currentNumber = currentNumber.substring(0, currentNumber.length() - 1);
@@ -98,7 +101,6 @@ public class CalculatorActivity extends AppCompatActivity {
             }
         });
 
-        // Plus/Minus button
         findViewById(R.id.btnPlusMinus).setOnClickListener(v -> {
             if (!currentNumber.isEmpty() && !currentNumber.equals("0")) {
                 if (currentNumber.startsWith("-")) {
@@ -110,7 +112,6 @@ public class CalculatorActivity extends AppCompatActivity {
             }
         });
 
-        // Equals button
         findViewById(R.id.btnEquals).setOnClickListener(v -> {
             if (!operator.isEmpty() && !currentNumber.isEmpty()) {
                 calculateResult();
@@ -149,7 +150,6 @@ public class CalculatorActivity extends AppCompatActivity {
                 break;
         }
 
-        // Format result to remove unnecessary decimals
         String resultString;
         if (result == (long) result) {
             resultString = String.valueOf((long) result);
@@ -157,9 +157,19 @@ public class CalculatorActivity extends AppCompatActivity {
             resultString = String.valueOf(result);
         }
 
+        String calculation = firstNumber + " " + operator + " " + secondNumber + " = " + resultString;
+        saveToHistory(calculation);
+
         tvExpression.setText(firstNumber + " " + operator + " " + secondNumber);
         tvResult.setText(resultString);
         currentNumber = resultString;
         firstNumber = result;
+    }
+
+    private void saveToHistory(String calculation) {
+        Set<String> history = prefs.getStringSet("history", new HashSet<>());
+        Set<String> newHistory = new HashSet<>(history);
+        newHistory.add(calculation);
+        prefs.edit().putStringSet("history", newHistory).apply();
     }
 }

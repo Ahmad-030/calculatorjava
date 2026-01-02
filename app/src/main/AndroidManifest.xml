@@ -11,6 +11,18 @@
         android:theme="@style/Theme.MyApplication">
 
         <activity
+            android:name=".PrivacyPolicyActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".AboutActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".HistoryActivity"
+            android:exported="false" />
+
+        <activity
             android:name=".CalculatorActivity"
             android:exported="false" />
 

@@ -13,9 +13,19 @@ public class StartActivity extends AppCompatActivity {
         setContentView(R.layout.activity_start);
 
         Button startBtn = findViewById(R.id.startBtn);
+        Button historyBtn = findViewById(R.id.historyBtn);
+        Button aboutBtn = findViewById(R.id.aboutBtn);
 
         startBtn.setOnClickListener(v ->
                 startActivity(new Intent(StartActivity.this, CalculatorActivity.class))
+        );
+
+        historyBtn.setOnClickListener(v ->
+                startActivity(new Intent(StartActivity.this, HistoryActivity.class))
+        );
+
+        aboutBtn.setOnClickListener(v ->
+                startActivity(new Intent(StartActivity.this, AboutActivity.class))
         );
     }
 }
